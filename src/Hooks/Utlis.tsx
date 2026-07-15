@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetCategorys, GetHomeSlider, GetLocations, GetSingleTalent, GetJobTitle, PostProfileCount, GetAllSearchCategory, GetTrendingJobs } from "../Services/AllApi";
+import { GetCategorys, GetPreferredAcademicCourse, GetHomeSlider, GetLocations, GetSingleTalent, GetJobTitle, PostProfileCount, GetAllSearchCategory, GetTrendingJobs } from "../Services/AllApi";
 
 
 
@@ -137,6 +137,32 @@ export const JObTittles = (category : string) => {
 
 
             const Response = await GetJobTitle(category)
+
+            return Response.data
+
+
+        },
+
+        staleTime: 1000 * 60 * 10,
+
+    })
+
+}
+
+
+
+
+// Get Prefered Academic Courses
+export const PreferedAcademicCourses = () => {
+
+    return useQuery({
+
+        queryKey: ["PreferedAcademicCourses"],
+
+        queryFn: async () => {  
+
+
+            const Response = await GetPreferredAcademicCourse()
 
             return Response.data
 

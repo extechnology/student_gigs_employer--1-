@@ -2,10 +2,9 @@ import Select from 'react-select';
 import RichTextEditor from '../Common/JobDis'
 import { FileText, Loader, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { AllLocations, GetJobCategory } from '../../Hooks/Utlis';
+import { AllLocations, GetJobCategory ,PreferedAcademicCourses} from '../../Hooks/Utlis';
 import { OfflineJobPost } from '../../Hooks/Jobform';
 import { Controller, useForm } from 'react-hook-form';
-import Academic from '../../Data/Academic.json';
 import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { JObTittles } from '../../Hooks/Utlis';
@@ -41,8 +40,8 @@ interface Inputs {
 // Salary types
 const compensationTypes: Option[] = [
 
-    { label: "Hourly Rate", value: "hourly" },
-    { label: "All-Day Gigs", value: "All-Day Gigs" },
+    { label: "Hourly Gigs", value: "Hourly Gigs" },
+    { label: "Daily Gigs", value: "Daily Gigs" },
     { label: "Weekend Gigs", value: "Weekend Gigs" },
     { label: "Vacation Gigs", value: "Vacation Gigs" },
     { label: "Project Based", value: "project" },
@@ -90,6 +89,10 @@ export default function OffilneTalentPost() {
     // Get Job Title
     const { data: JobTitle, isLoading: JobTitleLoading, isFetching: JobTitleFetching } = JObTittles(selectedCategory)
 
+
+
+    // Get Preferred Academic Courses
+    const { data: AcademicCourses, isLoading: AcademicCoursesLoading, isFetching: AcademicCoursesFetching } = PreferedAcademicCourses()
 
 
 
@@ -431,16 +434,18 @@ export default function OffilneTalentPost() {
                                 render={({ field: { onChange, value, ref } }) => (
                                     <Select
                                         ref={ref}
-                                        options={Academic}
-                                        value={value ? Academic.find((option) => option.label === value) : null}
+                                        options={AcademicCourses}
+                                        value={value ? AcademicCourses?.find((option: any) => option.label === value) : null}
                                         onChange={(selectedOption) => onChange(selectedOption?.label)}
                                         styles={customSelectStyles}
-                                        placeholder="Select Academic Course"
+                                        placeholder={!selectedCategory ? "Select a Job Category First" : "Select Academic Course"}
                                         className="mt-1"
                                         isClearable={true}
+                                        isDisabled={!selectedCategory}
+                                        isLoading={AcademicCoursesLoading || AcademicCoursesFetching}
                                         classNamePrefix="select"
                                         isSearchable={true}
-                                        noOptionsMessage={() => 'No options found'}
+                                        noOptionsMessage={() => 'No Academic Course found'}
 
                                     />
 
@@ -528,7 +533,7 @@ export default function OffilneTalentPost() {
                                         ref={ref}
                                         options={compensationTypes}
                                         value={value ? compensationTypes.find((option) => option.value === value) : null}
-                                        onChange={(selectedOption) => onChange(selectedOption?.label)}
+                                        onChange={(selectedOption) => onChange(selectedOption?.value)}
                                         styles={customSelectStyles}
                                         placeholder="Select a compensation type"
                                         className="mt-1"

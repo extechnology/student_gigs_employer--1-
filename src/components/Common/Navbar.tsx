@@ -1,9 +1,8 @@
 import { useState, useEffect, Fragment } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Crown, Gauge, GraduationCap, House, KeyRound, LayoutDashboard, LogOut, Search, Text, User } from 'lucide-react';
+import { Crown, Gauge, GraduationCap, House, KeyRound, LayoutDashboard, LogOut, Search, User } from 'lucide-react';
 import {
   Dialog,
-  PopoverGroup,
   Transition
 } from '@headlessui/react'
 import {
@@ -15,6 +14,7 @@ import ProtectedPostJobButton from "./ProtectedPostJobButton";
 import { GetProfile } from "../../Hooks/UserProfile";
 import { useQueryClient } from "@tanstack/react-query";
 import ProfileMenu from "./ProfileMenu";
+
 
 
 
@@ -45,7 +45,7 @@ export default function Header() {
 
 
   // To use auth context logout
-  const { logout, isAuthenticated } = useAuth()
+  const { logout, isAuthenticated, setLoginModalOpen } = useAuth()
 
 
 
@@ -54,10 +54,17 @@ export default function Header() {
 
 
 
+  // Listen for dock "More" button to open mobile menu
+  useEffect(() => {
+    const handleOpenMenu = () => setMobileMenuOpen(true);
+    document.addEventListener("open-mobile-menu", handleOpenMenu);
+    return () => document.removeEventListener("open-mobile-menu", handleOpenMenu);
+  }, []);
+
   // Add a scroll event listener
   useEffect(() => {
 
-    setcolor(location.pathname === "/" || location.pathname === "/findtalent" || location.pathname === "/employerprofile" ? true : false)
+    setcolor(location.pathname === "/" || location.pathname === "/findtalent" || location.pathname === "/employerprofile" || location.pathname === "/userprofile" ? true : false)
 
     const handleScroll = () => {
 
@@ -67,7 +74,7 @@ export default function Header() {
 
       } else {
         setScrolled(false);
-        setcolor(location.pathname === "/" || location.pathname === "/findtalent" || location.pathname === "/employerprofile" ? true : false)
+        setcolor(location.pathname === "/" || location.pathname === "/findtalent" || location.pathname === "/employerprofile" || location.pathname === "/userprofile" ? true : false)
       }
 
     }
@@ -116,159 +123,76 @@ export default function Header() {
 
         <header className="">
 
-          <nav aria-label="Global" className="mx-auto flex flex-col sm:flex-row  max-w-7xl justify-between sm:p-0 sm:py-0 px-3 py-1 lg:px-0 md:px-8">
+          <nav
+            aria-label="Global"
+            className="mx-auto max-w-7xl px-3 py-1 sm:px-0 sm:py-0 md:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:px-0"  >
+
+            {/* Left — Logo */}
+            <div className="flex items-center justify-between lg:justify-self-start">
+           
+              <Link
+                to="https://studentsgigs.com/"
+                className="-m-1.5 p-1.5"
+              >
+                <span className="sr-only">Students Gigs</span>
+
+                <img
+                  alt="Students Gigs"
+                  src="/Nav-Icon.png"
+                  loading="lazy"
+                  className="h-12 w-28 sm:h-20 sm:w-52"
+                />
+              </Link>
+           
+            </div>
 
 
-            <div className="flex items-center justify-between">
+            {/* Center — Desktop Buttons */}
+            <div className="hidden items-center gap-x-5 lg:flex lg:justify-self-center">
+        
+              {/* Post Job */}
+              <ProtectedPostJobButton />
 
-              <div className="flex lg:flex-1">
-                <Link to={'/'} className="-m-1.5 p-1.5">
-                  <span className="sr-only">Your Company</span>
-                  <img
-                    alt="nav-icon"
-                    src="/Nav-Icon.png"
-                    loading="lazy"
-                    className="sm:h-20 sm:w-52 h-12 w-28"
-                  />
-                </Link>
-              </div>
-
-
-              <div className="flex items-center justify-between">
-
-                {/* Home for mobile view */}
-                <Link to={'/'} className={`ms-1 text-md font-semibold text-gray-400 hover:text-green-600 sm:hidden block ${color ? "text-white" : ""}`}>
-                  <House size={24} />
-                </Link>
-
-
-
-                {/* Profile image */}
-                <div  className="ms-2 sm:hidden">
-
-                  <img
-                    src={data[0]?.profile?.profile_pic ?? "/DeaflutProfile.jpeg"}
-                    loading="lazy"
-                    alt="User profile"
-                    className="w-[25px] h-[25px] rounded-full object-cover "
-                  />
-
-                </div>
-
-
-
-                {/* Search  for mobile view */}
-                <Link
-                  to={'/findtalent'}
-                  className={`p-2 flex sm:hidden items-center justify-center ${color ? 'bg-transparent hover:bg-gray-600' : ""} text-md font-semibold`}
+              {/* Hire Students */}
+              <Link to="/findtalent">
+                <button
+                  className="  flex items-center gap-x-2 bg-[#eb8125] px-16 py-2 text-md font-semibold text-white transition-all duration-300 ease-in-out hover:scale-105 hover:cursor-pointer  hover:shadow-lg "
                 >
-                  <Search size={16} className={`${color ? 'text-white' : 'text-gray-900'}`} />
-
-                </Link>
-
-
-
-                <div className="flex lg:hidden">
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen(true)}
-                    className={`-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 ${color ? "text-white" : "text-black"}`}
-                  >
-                    <span className="sr-only">Open main menu</span>
-
-                    <Text aria-hidden="true" className="size-6" />
-
-                  </button>
-
-                </div>
-
-
-
-              </div>
+                  Hire Students
+                  <GraduationCap size={24} />
+                </button>
+              </Link>
 
             </div>
 
 
-
-
-
-
-            {/* Buttons */}
-            <div className='flex justify-center items-center gap-x-2 mb-2 sm:hidden'>
-
-
-              {/* Find Student Talents for mobile view */}
-              <Link to={'/findtalent'}>
-
-                <button className={`bg-[#eb8125] hover:cursor-pointer text-white font-semibold text-xs px-5 py-2 flex items-center sm:hidden`}>
-                  <GraduationCap size={16} className="me-2" /> Hire Students
-                </button>
-
-              </Link>
-
-
-              {/* Job post */}
-              <ProtectedPostJobButton />
-
-            </div>
-
-
-
-
-            {/* Desktop Navbar items */}
-            <PopoverGroup className="hidden lg:flex lg:gap-x-5 items-center mx-auto">
-
-
-              {/* Job post */}
-              <ProtectedPostJobButton />
-
-
-              {/* Find Student Talents */}
-              <Link to={'/findtalent'}>
-
-                <button className={`hover:cursor-pointer flex items-center gap-x-2 bg-[#eb8125] text-white font-semibold text-md px-16 py-2  hover:shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out `}>
-                  Hire Students<GraduationCap size={24} />
-                </button>
-
-              </Link>
-
-
+            {/* Right — Navigation Icons */}
+            <div className="hidden items-center gap-x-5 lg:flex lg:justify-self-end">
 
               {/* Home */}
-              <Link to={'/'} className={`text-md font-semibold text-gray-400 hover:text-green-600 ${color ? "text-white" : ""}`}>
+              <Link to="/" className={`text-md font-semibold text-gray-400 hover:text-green-600 ${color ? "text-white" : ""}`}  >
                 <House size={30} />
               </Link>
 
 
-
-              {/* Profile items */}
-              <ProfileMenu LoginStatus={isAuthenticated} HandleLogOut={HandleLogOut} data={data} color={color} />
-
-
+              {/* Profile */}
+              <ProfileMenu
+                LoginStatus={isAuthenticated}
+                HandleLogOut={HandleLogOut}
+                data={data}
+                color={color}
+                setLoginModalOpen={setLoginModalOpen}
+              />
 
               {/* Search */}
-              <div className="flex items-center border rounded-full px-2 overflow-hidden border-gray-200">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className={`w-full px-4 py-2 text-md focus:outline-none border-none  ${color ? 'bg-transparent text-white placeholder-white' : 'text-gray-900 bg-transparent'}`}
-                />
-                <Link
-                  to={'/findtalent'}
-                  className={`p-2 flex items-center justify-center ${color ? 'bg-transparent' : ""} text-md font-semibold`}
-                >
-                  <Search className={`${color ? 'text-white' : 'text-gray-400'}`} />
-                </Link>
-              </div>
+              <Link to="/findtalent" className={`flex items-center justify-center p-2 text-md font-semibold ${color ? "bg-transparent" : ""} `} >
+                <Search className={color ? "text-white" : "text-gray-400"} />
+              </Link>
 
-            </PopoverGroup>
+            </div>
 
 
           </nav>
-
-
-
-
 
 
 
@@ -421,15 +345,16 @@ export default function Header() {
                           {/* Login/Logout */}
                           {!isAuthenticated ? (
                             <div
-                              onClick={() => { setMobileMenuOpen(false) }}
-                              className="group -mx-3 flex items-center gap-x-3 px-3 py-4 text-base font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-400/45"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setLoginModalOpen(true);
+                              }}
+                              className="group -mx-3 flex items-center gap-x-3 px-3 py-4 text-base font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 border-b border-gray-400/45 cursor-pointer"
                             >
-                              <Link to={'/auth'}>
-                                <div className="flex items-center space-x-2">
-                                  <KeyRound className="h-5 w-5" />
-                                  <span>Login</span>
-                                </div>
-                              </Link>
+                              <div className="flex items-center space-x-2">
+                                <KeyRound className="h-5 w-5" />
+                                <span>Login</span>
+                              </div>
                             </div>
                           ) : (
                             <button
@@ -449,7 +374,7 @@ export default function Header() {
 
                       </div>
 
-                      
+
                     </div>
 
 

@@ -1,9 +1,11 @@
-import { ReactNode, Suspense, lazy} from "react";
+import { ReactNode, Suspense, lazy, useEffect, useRef } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "./Context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import MainLoader from "./components/Common/MainLoader";
 import ProtectedDashboard from "./components/Protected/ProtectedDashBoard";
+import LoginModal from "./components/LoginModal/Loginmodal";
+import { PostJobProtectedRoute } from "./components/Protected/JobProtectedRoute";
 
 
 
@@ -44,6 +46,24 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
 
 function App() {
+  const { isAuthenticated, isLoginModalOpen, setLoginModalOpen } = useAuth();
+  const location = useLocation();
+  const hasPromptedLogin = useRef(false);
+
+
+  useEffect(() => {
+
+    if (isAuthenticated) {
+      hasPromptedLogin.current = false;
+      return;
+    }
+
+    if (!hasPromptedLogin.current && location.pathname !== "/auth") {
+      setLoginModalOpen(true);
+      hasPromptedLogin.current = true;
+    }
+
+  }, [isAuthenticated, location.pathname, setLoginModalOpen]);
 
 
   return (
@@ -70,7 +90,14 @@ function App() {
           <Route element={<Layout />}>
 
             <Route path="/" element={<Landing />} />
-            <Route path="/postjob" element={<JobPost />} />
+            <Route
+              path="/postjob"
+              element={
+                <PostJobProtectedRoute>
+                  <JobPost />
+                </PostJobProtectedRoute>
+              }
+            />
             <Route path="/findtalent" element={<StudentFilter />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/termscondition" element={<Terms />} />
@@ -94,6 +121,16 @@ function App() {
 
             <Route
               path="/employerprofile"
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+
+
+            <Route
+              path="/userprofile"
               element={
                 <ProtectedRoute>
                   <UserProfile />
@@ -130,7 +167,7 @@ function App() {
       {/* Notifications */}
       <Toaster position="top-center" />
 
-
+      <LoginModal isOpen={isLoginModalOpen} setIsOpen={setLoginModalOpen} />
     </>
 
   );

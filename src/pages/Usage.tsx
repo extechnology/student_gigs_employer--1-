@@ -129,8 +129,15 @@ const PlanUsageDashboard = () => {
                             {/* Usage Progress Card - Prominent */}
                             {userData?.planFeatures?.map((item: PlanFeature, idx: number) => {
 
-                                const usagePercentage = (Number(item.used) / Number(item.limit)) * 100;
+                                const used = Number(item.used);
+                                const limit = Number(item.limit);
 
+                                const usagePercentage =
+                                    Number.isFinite(used) &&
+                                        Number.isFinite(limit) &&
+                                        limit > 0
+                                        ? Math.round((used / limit) * 100)
+                                        : 0;
                                 return (
 
                                     <div key={idx} className={`mb-8 transform transition-all duration-700 border-b border-gray-200/55 pb-8 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
@@ -192,7 +199,7 @@ const PlanUsageDashboard = () => {
                                                     </div>
                                                     <div>
                                                         <p className="text-gray-500 text-sm">Used</p>
-                                                        <p className="text-gray-800 text-xl font-bold group-hover:text-orange-500 transition-colors duration-300">{Math.round(usagePercentage)}%</p>
+                                                        <p className="text-gray-800 text-xl font-bold group-hover:text-orange-500 transition-colors duration-300">{usagePercentage}%</p>
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,19 +1,21 @@
 import { Link } from "react-router-dom";
 import { Popover } from "@headlessui/react";
 import { User, Crown, KeyRound, LogOut, LayoutDashboard, Gauge } from "lucide-react";
+import InitialAvatar from "./InitialAvatar";
 
 
 
 interface ProfileMenuProps {
     LoginStatus: boolean;
     HandleLogOut: () => void;
-    data: { employer?: { logo?: string } };
+    data: { employer?: { logo?: string | null; username?: string | null; company_name?: string | null } };
     color?: boolean;
+    setLoginModalOpen: (open: boolean) => void;
 }
 
 
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({ LoginStatus, HandleLogOut, data, color }) => {
+const ProfileMenu: React.FC<ProfileMenuProps> = ({ LoginStatus, HandleLogOut, data, color, setLoginModalOpen }) => {
 
 
 
@@ -26,18 +28,20 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ LoginStatus, HandleLogOut, da
                         <Popover.Button
                             className={`cursor-pointer flex items-center gap-x-1 text-sm font-semibold text-gray-400 ${color ? "text-white" : ""}`}
                         >
-                            <img
-                                src={data?.employer?.logo ?? "/DeaflutProfile.jpeg"}
-                                loading="lazy"
+                            <InitialAvatar
+                                imageUrl={data?.employer?.logo}
+                                username={data?.employer?.username}
+                                name={data?.employer?.company_name}
                                 alt="User profile"
-                                className="w-[30px] h-[30px] rounded-full object-cover"
+                                className="h-[30px] w-[30px] border border-white/70 shadow-md"
+                                textClassName="text-sm"
                             />
                         </Popover.Button>
 
                         <Popover.Panel
                             className="absolute -left-32 top-9 z-10 mt-3 w-52 dropdown rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5"
                         >
-                            <PopoverContent LoginStatus={LoginStatus} HandleLogOut={HandleLogOut} />
+                            <PopoverContent LoginStatus={LoginStatus} HandleLogOut={HandleLogOut} setLoginModalOpen={setLoginModalOpen} />
                         </Popover.Panel>
                     </>
                 )}
@@ -53,10 +57,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ LoginStatus, HandleLogOut, da
 interface PopoverContentProps {
     LoginStatus: boolean;
     HandleLogOut: () => void;
+    setLoginModalOpen: (open: boolean) => void;
 }   
 
 
-const PopoverContent: React.FC<PopoverContentProps> = ({ LoginStatus, HandleLogOut }) => (
+const PopoverContent: React.FC<PopoverContentProps> = ({ LoginStatus, HandleLogOut, setLoginModalOpen }) => (
 
     <div className="p-4">
         <MenuItem link="/employerprofile" icon={<User size={20} />} text="Profile" />
@@ -65,7 +70,7 @@ const PopoverContent: React.FC<PopoverContentProps> = ({ LoginStatus, HandleLogO
         <MenuItem link="/planusage" icon={<Gauge size={20} />} text="Plan Usage" />
 
         {!LoginStatus ? (
-            <Link to={'/auth'}><button className="w-full hover:cursor-pointer text-left flex font-semibold items-center gap-2 text-sm text-gray-900 hover:bg-gray-50 p-4 rounded-lg" ><KeyRound size={20} /> Login </button></Link>
+            <Popover.Button as="button" onClick={() => setLoginModalOpen(true)} className="w-full hover:cursor-pointer text-left flex font-semibold items-center gap-2 text-sm text-gray-900 hover:bg-gray-50 p-4 rounded-lg" ><KeyRound size={20} /> Login </Popover.Button>
         ) : (
             <MenuItemLogout icon={<LogOut size={20} />} text="Logout" HandleLogOut={HandleLogOut} />
         )}

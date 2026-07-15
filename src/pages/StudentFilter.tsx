@@ -41,7 +41,7 @@ export default function StudentFilter() {
 
                         {/* Background image */}
                         <div
-                            className="absolute inset-0 z-0 bg-[url('https://image.cnbcfm.com/api/v1/image/105874696-1556279627825gettyimages-947895256.jpeg?v=1571852572&w=1920&h=1080')] bg-cover bg-no-repeat bg-center opacity-20"
+                            className="absolute inset-0 z-0 bg-[url('/filter-banner.jpeg')] bg-cover bg-no-repeat bg-center opacity-20"
                             aria-hidden="true"
                         />
 
@@ -51,7 +51,7 @@ export default function StudentFilter() {
                             {/* Main heading */}
                             <p className="text-center text-2xl font-bold tracking-tight text-white sm:text-3xl mb-8 mt-5">
                                 <span className='font-extrabold'>Find the Right Student for the Job</span> <br />
-                                "Post roles and connect with student talent by city and salary"
+                                <span className="hidden sm:block">"Post roles and connect with student talent by city and salary"</span>
                             </p>
 
                         </div>

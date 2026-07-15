@@ -1,5 +1,6 @@
 import Footer from "@/components/Common/Footer"
 import Header from "@/components/Common/Navbar"
+import DockNavbar from "@/components/Common/DockNavbar"
 import { Outlet } from "react-router-dom"
 
 export default function Layout() {
@@ -25,6 +26,9 @@ export default function Layout() {
                 <footer aria-label="Footer">
                     <Footer />
                 </footer>
+
+                {/* Mobile Bottom Dock (lg:hidden inside component) */}
+                <DockNavbar />
 
             </main>
 

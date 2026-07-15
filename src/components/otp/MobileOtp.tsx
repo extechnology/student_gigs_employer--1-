@@ -198,7 +198,7 @@ export default function MobileOtpModal({ isOpen, setIsOpen }: MobileOtpProps) {
 
                     login(response.data.access)
 
-                    const from = location.state?.from?.pathname || "/";
+                    const from = location.state?.from?.pathname || "/findtalent/";
 
                     queryclient.invalidateQueries({ queryKey: ["UserProfile"] });
 

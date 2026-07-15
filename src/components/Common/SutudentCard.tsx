@@ -1,8 +1,11 @@
 import { MapPin } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 import { ProfileCount } from "@/Hooks/Utlis";
 import toast from "react-hot-toast";
+import { GetProfileCompletion } from "@/Hooks/UserProfile";
+import ProfileModal from "./ProfileModal";
 
 
 interface Designer {
@@ -14,6 +17,9 @@ interface Designer {
     id: number
 }
 
+const INCOMPLETE_PROFILE_MESSAGE = "Please complete your profile before viewing student profiles";
+const COMPLETION_CHECK_ERROR = "Unable to check profile completion. Please try again.";
+
 
 export default function SutudentCard({ name, jobtitle, imageUrl, location, id, premium_badge }: Designer) {
 
@@ -23,9 +29,23 @@ export default function SutudentCard({ name, jobtitle, imageUrl, location, id, p
     const { isPlanExpired, usage, isAuthenticated, refetchPlan } = useAuth();
 
 
+    // To check employer profile completion before viewing student profiles
+    const {
+        data: profileCompletion,
+        isLoading: profileCompletionLoading,
+        isFetching: profileCompletionFetching,
+        refetch: refetchProfileCompletion,
+    } = GetProfileCompletion(isAuthenticated);
+
+
 
     // To update profile count
     const { mutate } = ProfileCount();
+
+
+    // Profile completion modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [pendingUserId, setPendingUserId] = useState<number | null>(null);
 
 
 
@@ -34,14 +54,8 @@ export default function SutudentCard({ name, jobtitle, imageUrl, location, id, p
 
 
 
-    // To handle navigation
-    const handleNavigation = (user_id: number) => {
-
-        if (!isAuthenticated) {
-            navigate("/auth");
-            return;
-        }
-
+    // To open the student profile after all access checks pass
+    const openStudentProfile = (user_id: number) => {
 
         if (isPlanExpired) {
             toast.error("Your plan is expired. Please upgrade your plan to continue.");
@@ -79,6 +93,56 @@ export default function SutudentCard({ name, jobtitle, imageUrl, location, id, p
             }
 
         });
+
+    }
+
+
+    // To handle navigation
+    const handleNavigation = async (user_id: number) => {
+
+        if (!isAuthenticated) {
+            navigate("/auth");
+            return;
+        }
+
+        if (profileCompletionLoading || profileCompletionFetching) {
+            toast("Checking profile completion...");
+            return;
+        }
+
+        const result = await refetchProfileCompletion();
+
+        if (result.isError) {
+            toast.error(COMPLETION_CHECK_ERROR);
+            return;
+        }
+
+        const completion = result.data ?? profileCompletion;
+
+        if (!completion?.is_complete) {
+            toast.error(INCOMPLETE_PROFILE_MESSAGE);
+            setPendingUserId(user_id);
+            setIsModalOpen(true);
+            return;
+        }
+
+        openStudentProfile(user_id);
+
+    }
+
+
+    const handleModalClose = async () => {
+
+        const result = await refetchProfileCompletion();
+        const completion = result.data ?? profileCompletion;
+        const userId = pendingUserId;
+
+        setIsModalOpen(false);
+        setPendingUserId(null);
+
+        if (completion?.is_complete && userId !== null) {
+            openStudentProfile(userId);
+        }
 
     }
 
@@ -151,6 +215,12 @@ export default function SutudentCard({ name, jobtitle, imageUrl, location, id, p
 
 
             </section>
+
+            <ProfileModal
+                title="Complete Your Profile"
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+            />
 
 
         </>
