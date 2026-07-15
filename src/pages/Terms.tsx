@@ -86,14 +86,14 @@ const TermsAndConditions = () => {
                     <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Governing Law</h2>
                     <p className="text-gray-700">The laws of the Country, excluding its conflicts of law rules, shall govern this Terms and Your use of the Service. Your use of the Application may also be subject to other local, state, national, or international laws.</p>
 
-                    <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Disputes Resolution</h2>
+                    {/* <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Disputes Resolution</h2>
                     <p className="text-gray-700">If You have any concern or dispute about the Service, You agree to first try to resolve the dispute informally by contacting the Company.</p>
 
                     <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">For European Union (EU) Users</h2>
                     <p className="text-gray-700">If You are a European Union consumer, you will benefit from any mandatory provisions of the law of the country in which You are resident.</p>
 
                     <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">United States Legal Compliance</h2>
-                    <p className="text-gray-700">You represent and warrant that (i) You are not located in a country that is subject to the United States government embargo, or that has been designated by the United States government as a "terrorist supporting" country, and (ii) You are not listed on any United States government list of prohibited or restricted parties.</p>
+                    <p className="text-gray-700">You represent and warrant that (i) You are not located in a country that is subject to the United States government embargo, or that has been designated by the United States government as a "terrorist supporting" country, and (ii) You are not listed on any United States government list of prohibited or restricted parties.</p> */}
 
                     <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Severability and Waiver</h2>
 

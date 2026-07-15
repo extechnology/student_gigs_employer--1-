@@ -99,7 +99,7 @@ const Footer = () => {
 
           {/* WhatsApp Button */}
           <a
-            href="https://wa.me/yourPhoneNumber?text=Hi%20there!%20I%20want%20to%20chat."
+            href="https://wa.me/919072399100?text=Hi%21%20May%20I%20Know%20More%20About%20StudentsGigs%3F"
             target="_blank"
             rel="noopener noreferrer"
             className="flex w-52 justify-center items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow-lg transition-all mb-3"
@@ -109,8 +109,6 @@ const Footer = () => {
             </svg>
             <span className="text-center">Let’s Chat</span>
           </a>
-
-
 
 
         </div>

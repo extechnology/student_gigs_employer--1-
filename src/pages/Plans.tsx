@@ -7,6 +7,7 @@ import PlanLoader from '@/components/Loader/PlanLoader';
 import toast from 'react-hot-toast';
 import AnimatedSvg from '@/components/Loader/AnimatedSvg';
 import { load } from "@cashfreepayments/cashfree-js";
+import { AlertCircle } from 'lucide-react';
 
 
 
@@ -397,52 +398,71 @@ const EmployerPlansPage = () => {
 
                             {/* Current plan indicator */}
                             <motion.div
-                                className="mx-auto max-w-lg mb-10 text-center"
+                                className="mx-auto max-w-2xl mb-10 text-center px-4"
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.3, duration: 0.5 }}
                             >
 
+                                {currentPlan?.toLowerCase() === 'free' ? (
+                                    <div className="w-full flex justify-center items-center px-4 py-6">
+                                        <div className="w-full max-w-md bg-gradient-to-r from-amber-50 to-orange-50 border border-orange-200/80 rounded-2xl p-5 shadow-md">
+                                            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                                                <div className="flex items-center justify-center w-14 h-14 bg-orange-100 rounded-xl text-orange-600 shadow-inner flex-shrink-0">
+                                                    <AlertCircle size={28} className="animate-bounce" />
+                                                </div>
 
-                                {/* Plan Indicator */}
-                                <div className="bg-white rounded-xl shadow-lg px-6 py-4 inline-flex items-center gap-3">
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">
+                                                        Plan Not Subscribed
+                                                    </h3>
+                                                    <p className="mt-1 text-sm text-gray-600">
+                                                        Please subscribe to a plan to continue using this feature.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    /* Plan Indicator */
+                                    <div className="bg-white rounded-xl shadow-lg px-6 py-4 inline-flex items-center gap-3 border border-gray-100">
 
-                                    {data?.map((plan: Plan) => (
+                                        {data?.map((plan: Plan) => (
 
-                                        currentPlan?.toLowerCase() === plan?.id && (
+                                            currentPlan?.toLowerCase() === plan?.id && (
 
-                                            <div
-                                                className={`h-3 w-3 rounded-full animate-pulse 
-                                                ${currentPlan?.toLowerCase() === plan?.id
-                                                        ? (isPlanExpired ? "bg-rose-500" : "bg-green-400")
-                                                        : "bg-gray-300"}`
-                                                }
-                                            ></div>
+                                                <div
+                                                    key={plan?.id}
+                                                    className={`h-3 w-3 rounded-full animate-pulse 
+                                                    ${currentPlan?.toLowerCase() === plan?.id
+                                                            ? (isPlanExpired ? "bg-rose-500" : "bg-green-400")
+                                                            : "bg-gray-300"}`
+                                                    }
+                                                ></div>
 
-                                        )
+                                            )
 
-                                    ))}
+                                        ))}
+
+                                        <span className="font-medium text-gray-700">
+                                            Current Plan:
+                                        </span>
 
 
-                                    <span className="font-medium text-gray-700">
-                                        Current Plan:
-                                    </span>
+                                        {data?.map((plan: Plan) => (
 
+                                            currentPlan?.toLowerCase() === plan?.id && (
 
-                                    {data?.map((plan: Plan) => (
+                                                <span key={plan?.id} className={`font-bold flex items-center gap-2 ${getColorClass(plan?.color, 'text')}`}>
+                                                    {plan?.name?.toUpperCase()} <span className="text-rose-500">{currentPlan?.toLowerCase() === plan?.id && isPlanExpired ? '(Expired)' : ' '}</span>
+                                                </span>
 
-                                        currentPlan?.toLowerCase() === plan?.id && (
+                                            )
 
-                                            <span key={plan?.id} className={`font-bold flex items-center gap-2 ${getColorClass(plan?.color, 'text')}`}>
-                                                {plan?.name?.toUpperCase()} <span className="text-rose-500">{currentPlan?.toLowerCase() === plan?.id && isPlanExpired ? '(Expired)' : ' '}</span>
-                                            </span>
+                                        ))}
 
-                                        )
-
-                                    ))}
-
-                                </div>
-
+                                    </div>
+                                )}
 
                             </motion.div>
 

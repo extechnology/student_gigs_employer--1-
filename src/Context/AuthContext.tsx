@@ -48,6 +48,8 @@ interface AuthContextType {
     login: (token: string) => void;
     logout: () => void;
     refetchPlan: () => void; // Function to refetch plan when upgraded
+    isLoginModalOpen: boolean;
+    setLoginModalOpen: (open: boolean) => void;
 }
 
 
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(checkAuth());
+    const [isLoginModalOpen, setLoginModalOpen] = useState<boolean>(false);
 
 
     // Fetch user plans
@@ -149,7 +152,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, refetchPlan, plan, isPlanExpired: Expired, currentPlan, usage, isoffer, isLoadingPlan, isFetchingPlan, isErrorPlan }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, refetchPlan, plan, isPlanExpired: Expired, currentPlan, usage, isoffer, isLoadingPlan, isFetchingPlan, isErrorPlan, isLoginModalOpen, setLoginModalOpen }}>
             {children}
         </AuthContext.Provider>
     );

@@ -195,8 +195,8 @@ export default function Auth() {
 
                     toast.success("User Register Successfully")
 
-                    // Get previous route or default to home
-                    const from = location.state?.from?.pathname || "/";
+                    // Get previous route or default to Find Talent
+                    const from = location.state?.from?.pathname || "/findtalent/";
 
                     queryclient.invalidateQueries({ queryKey: ["UserProfile"] });
 
@@ -297,8 +297,8 @@ export default function Auth() {
 
                                 queryclient.invalidateQueries({ queryKey: ["UserProfile"] });
 
-                                // Get previous route or default to home
-                                const from = location.state?.from?.pathname || "/";
+                                // Get previous route or default to Find Talent
+                                const from = location.state?.from?.pathname || "/findtalent/";
 
                                 login(response.data.access)
 
@@ -470,9 +470,9 @@ export default function Auth() {
                                             <a onClick={() => { setForgotModal(!forgotModal) }} className="cursor-pointer underline-offset-4 font-semibold text-gray-900 hover:underline ms-3">Forget Password & Uername ?</a>
                                         </p>
 
-                                        <p className="whitespace-nowrap text-gray-600">
+                                        {/* {Status?<p className="whitespace-nowrap text-gray-600">
                                             <a href="https://studentsgigs.com/auth" className="cursor-pointer underline-offset-4 font-semibold text-gray-900 hover:underline ms-3">Login as Student</a>
-                                        </p>
+                                        </p> : null} */}
 
                                     </div>
 

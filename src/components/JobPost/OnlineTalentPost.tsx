@@ -2,9 +2,8 @@ import RichTextEditor from '../Common/JobDis'
 import { FileText, Loader, X } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
-import { AllLocations, JObTittles, GetJobCategory } from '../../Hooks/Utlis';
+import { JObTittles, GetJobCategory, PreferedAcademicCourses } from '../../Hooks/Utlis';
 import { OnlineJobPost } from '../../Hooks/Jobform';
-import Academic from '../../Data/Academic.json';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
@@ -31,7 +30,6 @@ interface Inputs {
     preferred_academic_courses: string;
     pay_structure: string;
     salary_type: string;
-    job_location: string;
 
 }
 
@@ -40,8 +38,8 @@ interface Inputs {
 // Salary types
 const compensationTypes: Option[] = [
 
-    { label: "Hourly Rate", value: "hourly" },
-    { label: "All-Day Gigs", value: "All-Day Gigs" },
+    { label: "Hourly Gigs", value: "Hourly Gigs" },
+    { label: "Daily Gigs", value: "Daily Gigs" },
     { label: "Weekend Gigs", value: "Weekend Gigs" },
     { label: "Vacation Gigs", value: "Vacation Gigs" },
     { label: "Project Based", value: "project" },
@@ -80,12 +78,6 @@ export default function OnlineTalentPost() {
 
 
 
-    // Search keyword for loaction
-    const [Search, setSearch] = useState<string>("")
-
-
-
-
     // Get Job Title
     const { data: JobTitle, isLoading: JobTitleLoading } = JObTittles(selectedCategory)
 
@@ -97,10 +89,8 @@ export default function OnlineTalentPost() {
 
 
 
-
-    // Get All Locations
-    const { data: Location, isLoading: LocationLoading } = AllLocations(Search)
-
+    // Get Preferred Academic Courses
+    const { data: AcademicCourses, isLoading: AcademicCoursesLoading, isFetching: AcademicCoursesFetching } = PreferedAcademicCourses()
 
 
 
@@ -150,7 +140,6 @@ export default function OnlineTalentPost() {
             formdata.append("preferred_academic_courses", data.preferred_academic_courses)
             formdata.append("pay_structure", data.pay_structure)
             formdata.append("salary_type", data.salary_type)
-            formdata.append("job_location", data.job_location)
 
             PostJob({ formData: formdata }, {
 
@@ -291,34 +280,19 @@ export default function OnlineTalentPost() {
                         <div className='sm:block hidden'>
 
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Job Location *
-                                {errors.job_title && (
-                                    <span className="text-red-500 ml-2 text-xs">Required</span>
-                                )}
+                                Job Location
                             </label>
 
                             <div className="mt-2">
-                                <Controller
-                                    name="job_location"
-                                    rules={{ required: "Job Location is required" }}
-                                    control={control}
-                                    render={({ field: { onChange, value, ref } }) => (
-                                        <Select
-                                            ref={ref}
-                                            options={Location}
-                                            onInputChange={(value) => setSearch(value)}
-                                            styles={customSelectStyles}
-                                            value={value ? Location?.find((option: Option) => option?.label === value) : null}
-                                            isSearchable={true}
-                                            className="basic-single"
-                                            onChange={(option: any) => { onChange(option?.label) }}
-                                            placeholder="Search a City...."
-                                            classNamePrefix="select"
-                                            noOptionsMessage={() => "No Locations Found..."}
-                                            isLoading={LocationLoading}
-
-                                        />
-                                    )}
+                                <Select
+                                    options={[]}
+                                    styles={customSelectStyles}
+                                    value={null}
+                                    isSearchable={false}
+                                    isDisabled={true}
+                                    className="basic-single"
+                                    placeholder="Not required for online jobs"
+                                    classNamePrefix="select"
                                 />
                             </div>
 
@@ -376,34 +350,19 @@ export default function OnlineTalentPost() {
                         <div className='sm:hidden block'>
 
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Job Location *
-                                {errors.job_title && (
-                                    <span className="text-red-500 ml-2 text-xs">Required</span>
-                                )}
+                                Job Location
                             </label>
 
                             <div className="mt-2">
-                                <Controller
-                                    name="job_location"
-                                    rules={{ required: "Job Location is required" }}
-                                    control={control}
-                                    render={({ field: { onChange, value, ref } }) => (
-                                        <Select
-                                            ref={ref}
-                                            options={Location}
-                                            onInputChange={(value) => setSearch(value)}
-                                            styles={customSelectStyles}
-                                            value={value ? Location?.find((option: Option) => option?.label === value) : null}
-                                            isSearchable={true}
-                                            className="basic-single"
-                                            onChange={(option: any) => { onChange(option?.label) }}
-                                            placeholder="Search a City...."
-                                            classNamePrefix="select"
-                                            noOptionsMessage={() => "No Locations Found..."}
-                                            isLoading={LocationLoading}
-
-                                        />
-                                    )}
+                                <Select
+                                    options={[]}
+                                    styles={customSelectStyles}
+                                    value={null}
+                                    isSearchable={false}
+                                    isDisabled={true}
+                                    className="basic-single"
+                                    placeholder="Not required for online jobs"
+                                    classNamePrefix="select"
                                 />
                             </div>
 
@@ -425,16 +384,18 @@ export default function OnlineTalentPost() {
                                 render={({ field: { onChange, value, ref } }) => (
                                     <Select
                                         ref={ref}
-                                        options={Academic}
-                                        value={value ? Academic.find((option) => option.label === value) : null}
+                                        options={AcademicCourses}
+                                        value={value ? AcademicCourses?.find((option: any) => option.label === value) : null}
                                         onChange={(selectedOption) => onChange(selectedOption?.label)}
                                         styles={customSelectStyles}
-                                        placeholder="Select Academic Course"
+                                        placeholder={!selectedCategory ? "Select a Job Category First" : "Select Academic Course"}
                                         className="mt-1"
                                         isClearable={true}
+                                        isDisabled={!selectedCategory}
+                                        isLoading={AcademicCoursesLoading || AcademicCoursesFetching}
                                         classNamePrefix="select"
                                         isSearchable={true}
-                                        noOptionsMessage={() => 'No options found'}
+                                        noOptionsMessage={() => 'No Academic Course found'}
 
                                     />
 
@@ -526,7 +487,7 @@ export default function OnlineTalentPost() {
                                         ref={ref}
                                         options={compensationTypes}
                                         value={value ? compensationTypes.find((option) => option.value === value) : null}
-                                        onChange={(selectedOption) => onChange(selectedOption?.label)}
+                                        onChange={(selectedOption) => onChange(selectedOption?.value)}
                                         styles={customSelectStyles}
                                         placeholder="Select a compensation type"
                                         className="mt-1"

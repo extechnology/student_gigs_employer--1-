@@ -1,7 +1,9 @@
 import { useState } from "react";
 import CompanyOpenCard from "../components/Common/CompanyOpenings"
 import ModernProfileModal from "../components/Common/ProfileModal";
-import { GetProfile } from "../Hooks/UserProfile";
+import ProfileCompletionCard from "../components/Common/ProfileCompletionCard";
+import InitialAvatar from "../components/Common/InitialAvatar";
+import { GetProfile, GetProfileCompletion } from "../Hooks/UserProfile";
 import { AlertCircle, History, IdCard, SquarePen } from "lucide-react";
 import { GetPostedJob } from "../Hooks/Jobform";
 
@@ -70,6 +72,16 @@ export default function UserProfile() {
     const { data: PostedJob, isError: PostedJobError, isLoading: PostedJobLoading, isFetching: PostedJobFetching } = GetPostedJob()
 
 
+    // Get employer profile completion
+    const {
+        data: ProfileCompletion,
+        isError: ProfileCompletionError,
+        isLoading: ProfileCompletionLoading,
+        isFetching: ProfileCompletionFetching,
+        refetch: RefetchProfileCompletion,
+    } = GetProfileCompletion()
+
+
 
 
     return (
@@ -89,7 +101,7 @@ export default function UserProfile() {
 
                             {/* Background image */}
                             <div
-                                className="absolute inset-0 z-0 bg-[url('https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?cs=srgb&dl=pexels-seven11nash-380769.jpg&fm=jpg')] bg-cover bg-no-repeat bg-center opacity-20"
+                                className="absolute inset-0 z-0 bg-[url('/user-banner.jpg')] bg-cover bg-no-repeat bg-center opacity-20"
                                 aria-hidden="true"
                             />
 
@@ -162,11 +174,13 @@ export default function UserProfile() {
 
                                             {/* Logo */}
                                             <div className="w-[70px] md:w-[90px] h-[70px] md:h-[90px] overflow-hidden rounded-full shadow-md">
-                                                <img
-                                                    src={data?.employer?.logo || "./DeaflutProfile.jpeg"}
-                                                    alt="logo"
-                                                    loading="lazy"
-                                                    className="w-full h-full object-cover"
+                                                <InitialAvatar
+                                                    imageUrl={data?.employer?.logo}
+                                                    username={data?.employer?.username}
+                                                    name={data?.employer?.company_name}
+                                                    alt="Company logo"
+                                                    className="h-full w-full border-4 border-white shadow-md ring-4 ring-emerald-100"
+                                                    textClassName="text-3xl md:text-4xl"
                                                 />
                                             </div>
 
@@ -207,7 +221,7 @@ export default function UserProfile() {
                                             <div>
                                                 <a>
                                                     <button onClick={() => setIsModalOpen(true)} className="hover:cursor-pointer flex items-center rounded-md shadow-md md:px-4 px-2 py-1 bg-gray-200 text-[#059669] font-bold hover:scale-110 duration-300">
-                                                        Edit Deatils <SquarePen size={18} className="ms-2" />
+                                                        Edit Details <SquarePen size={18} className="ms-2" />
                                                     </button>
                                                 </a>
                                             </div>
@@ -218,119 +232,130 @@ export default function UserProfile() {
                                 </div>
 
 
-                                {/*Company Story */}
-                                <div className="w-full px-3 sm:px-5 md:px-10 lg:px-40">
+                                <div className="px-3 pb-12 sm:px-5 md:px-10 lg:px-40">
+                                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+                                        <aside className="self-start lg:sticky lg:top-24">
+                                            <ProfileCompletionCard
+                                                data={ProfileCompletion}
+                                                isLoading={ProfileCompletionLoading || ProfileCompletionFetching}
+                                                isError={ProfileCompletionError}
+                                                onRetry={() => RefetchProfileCompletion()}
+                                                onCompleteProfile={() => setIsModalOpen(true)}
+                                            />
+                                        </aside>
 
-                                    <h1 className="text-2xl font-medium text-gray-900 flex items-center mb-6">
-                                        About Us <IdCard size={28} className="ms-2 mt-1" />
-                                    </h1>
+                                        <div className="min-w-0 space-y-10">
+                                            {/*Company Story */}
+                                            <section>
+                                                <h1 className="mb-6 flex items-center text-2xl font-medium text-gray-900">
+                                                    About Us <IdCard size={28} className="ms-2 mt-1" />
+                                                </h1>
 
-                                    <div className="space-y-6">
-                                        <div className="text-gray-600 leading-relaxed text-justify">
-                                            {data?.employer?.company_info ? (
-                                                <p>{data.employer.company_info}</p>
-                                            ) : (
-                                                <div className="flex flex-col items-center justify-center p-4 bg-gray-50/5 rounded-lg">
-                                                    <AlertCircle className="w-10 h-10 text-gray-500" />
-                                                    <p className="mt-2 text-gray-500 font-medium">About Us not Found.</p>
+                                                <div className="space-y-6">
+                                                    <div className="text-justify leading-relaxed text-gray-600">
+                                                        {data?.employer?.company_info ? (
+                                                            <p>{data.employer.company_info}</p>
+                                                        ) : (
+                                                            <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 p-6">
+                                                                <AlertCircle className="h-10 w-10 text-gray-500" />
+                                                                <p className="mt-2 font-medium text-gray-500">About Us not Found.</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                </div>
+                                            </section>
 
 
-                                {/* Company openings */}
-                                <div className="px-3 sm:px-5 md:px-10 lg:px-40">
-
-                                    <div className="m-auto w-full ">
-
-                                        <h1 className="text-2xl font-semibold pb-3 text-gray-800 flex items-center pt-10 text-center">
-                                            Recent Posts <History size={24} className="ms-2 mt-1" />
-                                        </h1>
-
-                                    </div>
+                                            {/* Company openings */}
+                                            <section>
+                                                <div className="m-auto w-full">
+                                                    <h1 className="flex items-center pb-3 text-center text-2xl font-semibold text-gray-800">
+                                                        Recent Posts <History size={24} className="ms-2 mt-1" />
+                                                    </h1>
+                                                </div>
 
 
-                                    {PostedJobError || PostedJobLoading || PostedJobFetching ?
+                                                {PostedJobError || PostedJobLoading || PostedJobFetching ?
 
-                                        <div className="py-5">
-                                            <div className="w-full sm:w-3/4 m-auto">
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                                    {Array.from({ length: 3 }).map((_, index) => (
-                                                        <div key={index} className="border border-gray-200 p-6 rounded-lg shadow-sm animate-pulse">
-                                                            {/* Job Title & Button */}
-                                                            <div className="flex gap-10 items-center justify-center">
-                                                                <div className="h-6 w-40 bg-gray-200 rounded"></div>
-                                                                <div className="h-8 w-20 bg-gray-200 rounded"></div>
-                                                            </div>
+                                                    <div className="py-5">
+                                                        <div className="w-full">
+                                                            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                                                                {Array.from({ length: 3 }).map((_, index) => (
+                                                                    <div key={index} className="animate-pulse rounded-lg border border-gray-200 p-6 shadow-sm">
+                                                                        {/* Job Title & Button */}
+                                                                        <div className="flex items-center justify-center gap-10">
+                                                                            <div className="h-6 w-40 rounded bg-gray-200"></div>
+                                                                            <div className="h-8 w-20 rounded bg-gray-200"></div>
+                                                                        </div>
 
-                                                            {/* Posted Date */}
-                                                            <div className="flex gap-2 items-center mt-3">
-                                                                <div className="h-4 w-4 bg-gray-200 rounded-full"></div>
-                                                                <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                                                            </div>
+                                                                        {/* Posted Date */}
+                                                                        <div className="mt-3 flex items-center gap-2">
+                                                                            <div className="h-4 w-4 rounded-full bg-gray-200"></div>
+                                                                            <div className="h-4 w-32 rounded bg-gray-200"></div>
+                                                                        </div>
 
-                                                            {/* Job Type & Salary */}
-                                                            <div className="flex justify-between py-5">
-                                                                <div className="h-6 w-24 bg-gray-200 rounded"></div>
-                                                                <div className="h-6 w-32 bg-gray-200 rounded"></div>
-                                                            </div>
+                                                                        {/* Job Type & Salary */}
+                                                                        <div className="flex justify-between py-5">
+                                                                            <div className="h-6 w-24 rounded bg-gray-200"></div>
+                                                                            <div className="h-6 w-32 rounded bg-gray-200"></div>
+                                                                        </div>
 
-                                                            <hr className="border-gray-200" />
+                                                                        <hr className="border-gray-200" />
 
-                                                            {/* Company Details */}
-                                                            <div className="flex pt-5">
-                                                                <div className="w-[50px] h-[50px] bg-gray-200 rounded-lg"></div>
-                                                                <div className="pl-3">
-                                                                    <div className="h-5 w-32 bg-gray-200 rounded"></div>
-                                                                    <div className="h-4 w-24 bg-gray-200 rounded mt-1"></div>
-                                                                </div>
+                                                                        {/* Company Details */}
+                                                                        <div className="flex pt-5">
+                                                                            <div className="h-[50px] w-[50px] rounded-lg bg-gray-200"></div>
+                                                                            <div className="pl-3">
+                                                                                <div className="h-5 w-32 rounded bg-gray-200"></div>
+                                                                                <div className="mt-1 h-4 w-24 rounded bg-gray-200"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        :
-
-                                        PostedJob?.jobs?.length > 0 ?
-
-                                            <div className="grid grid-cols-1 md:grid-cols-3 m-auto w-full gap-x-5">
-
-                                                {PostedJob?.jobs?.map((item: Job, index: number) => (
-
-                                                    <div key={index}>
-
-                                                        <CompanyOpenCard
-                                                            company_name={item?.company?.company_name}
-                                                            logo={item?.company?.logo}
-                                                            pay_structure={item?.pay_structure}
-                                                            job_title={item?.job_title}
-                                                            posted_date={item?.posted_date}
-                                                            country={item?.company?.country}
-                                                            job_location={item?.country ? item?.country : item?.company?.country.label}
-                                                            salary_type={item?.salary_type}
-                                                            id={item?.id}
-                                                            job_type={item?.job_type}
-                                                            key={index}
-                                                        />
-
                                                     </div>
-                                                ))}
 
-                                            </div>
+                                                    :
 
-                                            :
+                                                    PostedJob?.jobs?.length > 0 ?
 
-                                            <div className="flex flex-col items-center justify-center bg-gray-50/5 rounded-lg py-16">
-                                                <AlertCircle className="w-10 h-10 text-gray-500" />
-                                                <p className="mt-2 text-gray-500 font-medium">No Recent Posts</p>
-                                            </div>
-                                    }
+                                                        <div className="m-auto grid w-full grid-cols-1 gap-x-5 md:grid-cols-2 xl:grid-cols-3">
 
+                                                            {PostedJob?.jobs?.map((item: Job, index: number) => (
+
+                                                                <div key={index}>
+
+                                                                    <CompanyOpenCard
+                                                                        company_name={item?.company?.company_name}
+                                                                        logo={item?.company?.logo}
+                                                                        pay_structure={item?.pay_structure}
+                                                                        job_title={item?.job_title}
+                                                                        posted_date={item?.posted_date}
+                                                                        country={item?.company?.country}
+                                                                        job_location={item?.country ? item?.country : item?.company?.country.label}
+                                                                        salary_type={item?.salary_type}
+                                                                        id={item?.id}
+                                                                        job_type={item?.job_type}
+                                                                        key={index}
+                                                                    />
+
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+
+                                                        :
+
+                                                        <div className="flex flex-col items-center justify-center rounded-lg bg-gray-50 py-16">
+                                                            <AlertCircle className="h-10 w-10 text-gray-500" />
+                                                            <p className="mt-2 font-medium text-gray-500">No Recent Posts</p>
+                                                        </div>
+                                                }
+
+                                            </section>
+                                        </div>
+                                    </div>
                                 </div>
 
 

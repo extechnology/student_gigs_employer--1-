@@ -8,7 +8,6 @@ import { useStudentSearch } from "../../Context/StudentFilterContext";
 import { AllSearchCategory } from "../../Hooks/Utlis";
 import { useAuth } from "@/Context/AuthContext";
 import toast from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router-dom";
 
 
 // form inputs
@@ -31,8 +30,8 @@ interface Option {
 // Compensation Types
 const compensationTypes: Option[] = [
 
-    { label: "Hourly Rate", value: "hourly" },
-    { label: "All-Day Gigs", value: "All-Day Gigs" },
+    { label: "Hourly Gigs", value: "Hourly Gigs" },
+    { label: "Daily Gigs", value: "Daily Gigs" },
     { label: "Weekend Gigs", value: "Weekend Gigs" },
     { label: "Vacation Gigs", value: "Vacation Gigs" },
     { label: "Project Based", value: "project" },
@@ -156,15 +155,11 @@ const SelectedStyles = {
 
 export default function FilterBar() {
 
-    
-    const navigate = useNavigate();
-    
 
-    // Get the current path
-    const location = useLocation();
+
 
     // Auth Context
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, setLoginModalOpen } = useAuth()
 
 
     // Search keyword for loaction
@@ -196,7 +191,7 @@ export default function FilterBar() {
 
             toast.error("Please Login to Search");
 
-            navigate("/auth", { state: { from: location } })
+            setLoginModalOpen(true);
 
             return
 
@@ -309,8 +304,8 @@ export default function FilterBar() {
                                             <Selecet
                                                 ref={ref}
                                                 options={compensationTypes}
-                                                value={value ? compensationTypes?.find((option) => option?.label === value) : null}
-                                                onChange={(option) => { onChange(option?.label) }}
+                                                value={value ? compensationTypes?.find((option) => option?.value === value) : null}
+                                                onChange={(option) => { onChange(option?.value) }}
                                                 placeholder={"Select Your Salary Type..."}
                                                 isSearchable={false}
                                                 className="basic-single"

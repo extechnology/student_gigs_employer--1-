@@ -42,7 +42,7 @@ export default function StudentProfile() {
                 <div className="c">
 
 
-                    <div className=" w-full m-auto px-1 sm:px-16">
+                    <div className=" w-full m-auto px-1 sm:px-10">
 
 
                         {
@@ -55,13 +55,13 @@ export default function StudentProfile() {
 
                                 <div>
 
-                                    <section className="pt-10">
+                                    <section className="sm:pt-10">
 
 
                                         {/* Banner Image */}
                                         <div className="relative group h-[25vh] md:h-[25vh] lg:h-[45vh] rounded-lg  md:rounded-2xl lg:rounded-3xl ">
                                             <img
-                                                src={data?.profile?.cover_photo ? data?.profile?.cover_photo : "https://www.paxus.com.au/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbk1HIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--0725fc0328bc750a0fcc18a18ffde9bcca5b8dff/img-placeholder.jpg"}
+                                                src={data?.profile?.cover_photo ? data?.profile?.cover_photo : "/Cover-def.jpg"}
                                                 alt="banner"
                                                 loading="lazy"
                                                 className="w-full h-full object-cover rounded-lg md:rounded-2xl lg:rounded-3xl"
@@ -77,7 +77,7 @@ export default function StudentProfile() {
 
                                                 <div className="flex items-center gap-4">
 
-                                                    <div className="relative group z-100">
+                                                    <div className="relative group">
 
                                                         {/* Shimmer border effect for premium users */}
                                                         { data?.premium_badge && (

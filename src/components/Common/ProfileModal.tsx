@@ -9,6 +9,7 @@ import Select from "react-select";
 import Flag from 'react-world-flags';
 import { AddProfile, GetProfile } from '../../Hooks/UserProfile';
 import toast from 'react-hot-toast';
+import InitialAvatar from './InitialAvatar';
 
 
 // modal props
@@ -99,6 +100,8 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
         formState: { errors, isSubmitting },
         reset,
         setValue,
+        setError,
+        clearErrors,
         control
     } = useForm<FormInputs>();
 
@@ -108,21 +111,22 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
     // Set default values
     useEffect(() => {
 
-        if (data) {
+        if (isOpen && data) {
 
             const selectedUser = data?.employer
 
-            setSelectedCountry(selectedUser?.country);
+            setSelectedCountry(selectedUser?.country ?? null);
 
             reset(selectedUser)
 
-            SetId(selectedUser?.id)
+            SetId(selectedUser?.id ?? '')
 
-            setLogoPreview(selectedUser?.logo)
+            setLogoPreview(selectedUser?.logo || null)
+            clearErrors('logo')
 
         }
 
-    }, [data, reset]);
+    }, [clearErrors, data, isOpen, reset]);
 
 
 
@@ -194,6 +198,7 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
             reader.onloadend = () => {
                 setLogoPreview(reader.result as string);
                 setValue('logo', file);
+                clearErrors('logo');
 
             };
             reader.readAsDataURL(file);
@@ -206,6 +211,11 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
     // Submit Form
     const onFormSubmit: SubmitHandler<FormInputs> = (data) => {
 
+        if (!logoPreview && !(data.logo instanceof File)) {
+            setError('logo', { type: 'required', message: 'Company logo is required' });
+            toast.error("Company logo is required");
+            return;
+        }
 
         const formdata = new FormData()
 
@@ -265,7 +275,7 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-black/40 backdrop-blur-sm"
+                className="fixed inset-0 z-1000 flex items-center justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-sm"
             >
 
 
@@ -402,7 +412,11 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
                                                             <motion.button
                                                                 type="button"
                                                                 whileHover={{ scale: 1.1 }}
-                                                                onClick={() => setLogoPreview(null)}
+                                                                onClick={() => {
+                                                                    setLogoPreview(null);
+                                                                    setValue('logo', null);
+                                                                    setError('logo', { type: 'required', message: 'Company logo is required' });
+                                                                }}
                                                                 className="absolute -top-2 -right-2 p-2 bg-red-500 text-white rounded-full shadow-lg"
                                                             >
                                                                 <Trash2 size={16} />
@@ -411,9 +425,18 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
                                                         </div>
 
                                                     ) : (
-                                                        <label className="w-32 h-32 rounded-full bg-gray-50 border-4 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-gray-100 transition-all group">
-                                                            <Camera className="w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors" />
-                                                            <span className="text-xs text-gray-500 mt-2">Upload Logo</span>
+                                                        <label className="relative flex h-32 w-32 cursor-pointer items-center justify-center rounded-full transition-all group">
+                                                            <InitialAvatar
+                                                                username={data?.employer?.username}
+                                                                name={data?.employer?.company_name}
+                                                                alt="Company avatar"
+                                                                className="h-32 w-32 border-4 border-white shadow-xl ring-4 ring-emerald-100 transition-transform duration-300 group-hover:scale-105 group-hover:ring-blue-100"
+                                                                textClassName="text-5xl"
+                                                            />
+                                                            <span className="absolute -bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-md ring-1 ring-emerald-100 transition-colors group-hover:text-blue-700 group-hover:ring-blue-100">
+                                                                <Camera className="h-3.5 w-3.5" />
+                                                                Upload *
+                                                            </span>
                                                             <input
                                                                 type="file"
                                                                 className="hidden"
@@ -425,6 +448,9 @@ const ModernProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, titl
                                                     )}
 
                                                 </div>
+                                                {errors.logo && (
+                                                    <p className="text-sm font-medium text-red-500">{errors.logo.message}</p>
+                                                )}
 
                                             </div>
 

@@ -96,6 +96,14 @@ export const GetUserProfile = async (header: object) => {
 }
 
 
+// Get employer profile completion
+export const GetEmployerProfileCompletion = async (header: object) => {
+
+    return await CommonApi("GET", `${Base_Url}/profile/completion/`, "", header)
+
+}
+
+
 
 // Add User profile
 export const AddUserProfile = async (data: any, header: object, id: string) => {
@@ -215,12 +223,22 @@ export const GetJobApplicants = async (id: string, job_type: string, header: obj
 //GET Job Title
 export const GetJobTitle = async (category: string) => {
 
-
     const params = new URLSearchParams({ category: category })
 
     return await CommonApi("GET", `${Base_Url}/job-titles-view/?${params.toString()}`, "", "")
 
 }
+
+
+
+//GET Preferred Academic Courses
+export const GetPreferredAcademicCourse = async () => {
+
+
+    return await CommonApi("GET", `${Base_Url}/education-api/`, "", "")
+
+}
+
 
 
 //GET User Plans
