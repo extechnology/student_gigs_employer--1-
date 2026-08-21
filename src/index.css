@@ -387,4 +387,59 @@ html {
     100% {
         transform: translateX(300%) skewX(-20deg);
     }
+}/* Custom Phone Login Input */
+.phone-login-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  padding: 0.65rem 0.875rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.phone-login-input:focus-within {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+
+.phone-login-input .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 0.65rem;
+  padding-right: 0.65rem;
+  border-right: 1px solid #e5e7eb;
+}
+
+.phone-login-input .PhoneInputCountryIcon {
+  width: 1.5rem;
+  height: 1.1rem;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.phone-login-input .PhoneInputCountrySelectArrow {
+  opacity: 0.6;
+  border-bottom-width: 0;
+  border-top-color: #374151;
+  margin-left: 0.25rem;
+}
+
+.phone-login-input .PhoneInputInput {
+  flex: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.phone-login-input .PhoneInputInput::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
 }
