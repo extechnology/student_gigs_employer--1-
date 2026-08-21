@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { Dialog, DialogClose, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { motion } from "framer-motion";
-import { X, GraduationCap, Briefcase } from "lucide-react";
+import { GraduationCap, Briefcase } from "lucide-react";
 
 
 interface LoginModalProps {
@@ -38,13 +38,13 @@ export default function LoginModal({ isOpen, setIsOpen }: LoginModalProps) {
             <DialogContent
                 onPointerDownOutside={(e) => e.preventDefault()}
                 onEscapeKeyDown={(e) => e.preventDefault()}
-                className="p-0 w-[92vw] sm:max-w-3xl md:max-w-4xl overflow-hidden rounded-2xl bg-transparent border-0 ring-0 shadow-2xl"
+                className="p-0 w-[92vw] sm:max-w-3xl md:max-w-4xl overflow-hidden rounded-2xl bg-transparent border-0 ring-0 shadow-2xl [&>button]:hidden"
             >
                 {/* Close Button */}
-                <DialogClose className="absolute right-3 top-3 hover:cursor-pointer z-50 rounded-full bg-black/50 p-1.5 backdrop-blur-md border border-white/10 hover:bg-black/70 transition-all group">
+                {/* <DialogClose className="absolute right-3 top-3 hover:cursor-pointer z-50 rounded-full bg-black/50 p-1.5 backdrop-blur-md border border-white/10 hover:bg-black/70 transition-all group">
                     <X className="h-4 w-4 text-gray-300 group-hover:text-white transition-colors" />
                     <span className="sr-only">Close</span>
-                </DialogClose>
+                </DialogClose> */}
 
                 {/* Grid: stacked on mobile, side-by-side on md+ */}
                 <motion.div
